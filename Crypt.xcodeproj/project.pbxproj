@@ -9,6 +9,7 @@
 /* Begin PBXBuildFile section */
 		1A5C742E1F15554700D9792A /* PromptWindowController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1A5C742D1F15554700D9792A /* PromptWindowController.swift */; };
 		1A8643121F15292200108C19 /* Preferences.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1A8643111F15292200108C19 /* Preferences.swift */; };
+		84DBB0001F31615D002B0DB6 /* Logger.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84DBAFFF1F31615D002B0DB6 /* Logger.swift */; };
 		C7AD38F81D22B049000FB736 /* FDEAddUserService.m in Sources */ = {isa = PBXBuildFile; fileRef = C7AD38F71D22B049000FB736 /* FDEAddUserService.m */; };
 		C7AD38FA1D22B049000FB736 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = C7AD38F91D22B049000FB736 /* main.m */; };
 		C7AD39001D22B3E3000FB736 /* CryptMechanism.swift in Sources */ = {isa = PBXBuildFile; fileRef = C7AD38FF1D22B3E3000FB736 /* CryptMechanism.swift */; };
@@ -48,6 +49,7 @@
 /* Begin PBXFileReference section */
 		1A5C742D1F15554700D9792A /* PromptWindowController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PromptWindowController.swift; sourceTree = "<group>"; };
 		1A8643111F15292200108C19 /* Preferences.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Preferences.swift; sourceTree = "<group>"; };
+		84DBAFFF1F31615D002B0DB6 /* Logger.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Logger.swift; sourceTree = "<group>"; };
 		C7AD38F31D22B049000FB736 /* FDEAddUserService.xpc */ = {isa = PBXFileReference; explicitFileType = "wrapper.xpc-service"; includeInIndex = 0; path = FDEAddUserService.xpc; sourceTree = BUILT_PRODUCTS_DIR; };
 		C7AD38F51D22B049000FB736 /* FDEAddUserServiceProtocol.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = FDEAddUserServiceProtocol.h; sourceTree = "<group>"; };
 		C7AD38F61D22B049000FB736 /* FDEAddUserService.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = FDEAddUserService.h; sourceTree = "<group>"; };
@@ -91,6 +93,7 @@
 			isa = PBXGroup;
 			children = (
 				1A8643111F15292200108C19 /* Preferences.swift */,
+				84DBAFFF1F31615D002B0DB6 /* Logger.swift */,
 			);
 			name = Utility;
 			sourceTree = "<group>";
@@ -282,6 +285,7 @@
 				1A8643121F15292200108C19 /* Preferences.swift in Sources */,
 				D2D31D611C2303F500839D93 /* Enablement.swift in Sources */,
 				D2D31D5D1C2303F500839D93 /* CryptAuthPlugin.m in Sources */,
+				84DBB0001F31615D002B0DB6 /* Logger.swift in Sources */,
 				D2D31D671C2307D500839D93 /* CryptGUI.swift in Sources */,
 				1A5C742E1F15554700D9792A /* PromptWindowController.swift in Sources */,
 				D2D31D631C2303F500839D93 /* PromptWindowController.m in Sources */,

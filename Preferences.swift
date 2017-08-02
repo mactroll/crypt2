@@ -15,6 +15,7 @@ let defaults = UserDefaults.standard
 ///
 /// Use these keys, rather than raw strings.
 enum Preferences {
+  static let logPath = "LogPath"
   static let outputPath = "OutputPath"
   static let keyRotateDays = "KeyRotateDays"
   static let removePlist = "RemovePlist"
