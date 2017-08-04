@@ -89,7 +89,7 @@ class CryptMechanism: NSObject {
     // This can be decoded on the other side with unarchiveObjectWithData
     guard let data : Data = NSKeyedArchiver.archivedData(withRootObject: encryptionWasEnabled)
       else {
-        NSLog("Crypt:MechanismInvoke:Check:setHintValue:[+] Failed to unwrap data");
+        logger.logit(.base, message: "Crypt:MechanismInvoke:Check:setHintValue:[+] Failed to unwrap data");
         return false
     }
     
@@ -111,13 +111,13 @@ class CryptMechanism: NSObject {
     var err: OSStatus = noErr
     err = self.mechanism.pointee.fPlugin.pointee.fCallbacks.pointee.GetHintValue(mechanism.pointee.fEngine, contextCryptDomain.utf8String!, &value)
     if err != errSecSuccess {
-      NSLog("%@","couldn't retrieve hint value")
+      logger.logit(.base, message: "couldn't retrieve hint value")
       return false
     }
     let outputdata = Data.init(bytes: value!.pointee.data, count: value!.pointee.length) //UnsafePointer<UInt8>(value!.pointee.data)
     guard let boolHint = NSKeyedUnarchiver.unarchiveObject(with: outputdata)
       else {
-        NSLog("couldn't unpack hint value")
+        logger.logit(.base, message: "couldn't unpack hint value")
         return false
     }
     
@@ -126,11 +126,11 @@ class CryptMechanism: NSObject {
   
   // Allow the login. End of the mechanism
   func allowLogin() -> OSStatus {
-    NSLog("Crypt:MechanismInvoke:Check:[+] Done. Thanks and have a lovely day.");
+    logger.logit(.base, message: "Crypt:MechanismInvoke:Check:[+] Done. Thanks and have a lovely day.");
     var err: OSStatus = noErr
     err = self.mechanism.pointee.fPlugin.pointee.fCallbacks.pointee.SetResult(
       mechanism.pointee.fEngine, AuthorizationResult.allow)
-    NSLog("Crypt:MechanismInvoke:Check:[+] [%d]", Int(err));
+    logger.logit(.base, message: "Crypt:MechanismInvoke:Check:[+] [\(Int(err))]");
     return err
   }
 }

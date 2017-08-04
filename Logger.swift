@@ -6,14 +6,13 @@
 //  Copyright © 2017 Graham Gilbert All rights reserved.
 //
 import Foundation
+import os.log
+import Dispatch
 
 
 // quick class to log to a file and/or the OS
 /// A singleton `Logger` instance for the app to use.
 let logger = Logger()
-
-import Foundation
-import os.log
 
 /// The individual logging levels to use when logging in NoMAD
 ///
@@ -41,10 +40,15 @@ class Logger {
   
   /// Set to a level from `LogLevel` enum to control what gets logged.
   var loglevel: LogLevel = .base
+  let logFile = OSLog(subsystem: "com.grahamgilbert.crypt", category: "Crypt")
   var file = true
   var path: String = defaults.string(forKey: Preferences.logPath) ?? "/var/log/crypt.log"
-  var handle: FileHandle? = nil
   
+  // methodology inspired by https://github.com/emaloney/CleanroomLogger
+  
+  var fileObject: UnsafeMutablePointer<FILE>?
+  let newlines: [Character] = ["\n", "\r"]
+
   /// Init method simply check to see if Verbose logging is enabled or not for the Logger object.
   init() {
     if (defaults.bool(forKey: "Verbose") == true) {
@@ -57,7 +61,21 @@ class Logger {
       loglevel = .base
     }
     
-    getFileHandle()
+    // check to see if file logging has been turned off
+    
+    if !defaults.bool(forKey: Preferences.fileLogging ) {
+      file = false
+    }
+    
+    openFile()
+  }
+  
+  deinit {
+    
+    // be nice and close the file
+    
+    fclose(fileObject)
+
   }
   
   func logit(_ level: LogLevel, message: String) {
@@ -67,26 +85,34 @@ class Logger {
       NSLog("level: \(level) - " + message)
       
       if file {
-          try handle?.write(message.data(using: String.Encoding.utf8)!)
+        var addNewline = true
+        
+        if message.characters.count > 0 {
+          let lastChar = message.characters[message.characters.index(before: message.characters.endIndex)]
+          addNewline = !newlines.contains(lastChar)
+        }
+        
+        fputs(message, fileObject)
+        
+        if addNewline {
+          fputc(0x0A, fileObject)
+        }
+        
+        fflush(fileObject)
+      
       }
     }
   }
   
-  private func getFileHandle() {
-    let fm = FileManager.default
+  private func openFile() {
+    let f = fopen(path, "a")
+    guard f != nil else {
+      // error getting the file handle
+      NSLog("Error getting log file handle for Cyrpt.")
+      file = false
+      return
+    }
     
-    // create the log file if it doesn't already exist
-    if !fm.fileExists(atPath: path) {
-      do {
-        fm.createFile(atPath: path, contents: nil, attributes: nil)
-      } catch {
-        // couldn't create a file, lets set logging off and return
-        file = false
-        return
-      }
-    }
-    let handle = FileHandle(forWritingAtPath: path)
-    handle?.seekToEndOfFile()
+    fileObject = f
   }
-  
 }
