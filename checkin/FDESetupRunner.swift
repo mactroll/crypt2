@@ -8,9 +8,13 @@
 
 import Foundation
 
+enum FDESetupError: Error {
+  case errorOnResult(String)
+}
+
 struct FDESetupRunner {
   
-  func run(arguments: [String]) -> String {
+  func run(arguments: [String], userInfo: Data?=nil) throws -> String {
     let inPipe = Pipe.init()
     let outPipe = Pipe.init()
     let errorPipe = Pipe.init()
@@ -23,17 +27,26 @@ struct FDESetupRunner {
     task.standardOutput = outPipe
     task.standardError = errorPipe
     task.launch()
-    inPipe.fileHandleForWriting.write(userInfo)
-    inPipe.fileHandleForWriting.closeFile()
+    
+    if let info = userInfo {
+      inPipe.fileHandleForWriting.write(info)
+      inPipe.fileHandleForWriting.closeFile()
+    }
+    
     task.waitUntilExit()
     
     let outputData = outPipe.fileHandleForReading.readDataToEndOfFile()
     outPipe.fileHandleForReading.closeFile()
     
     let errorData = errorPipe.fileHandleForReading.readDataToEndOfFile()
-    let errorMessage = String(data: errorData, encoding: .utf8)
+    if let errorMessage = String(data: errorData, encoding: .utf8) {
+      errorPipe.fileHandleForReading.closeFile()
+      if errorMessage != "" {
+        throw FDESetupError.errorOnResult(errorMessage)
+      }
+    }
     errorPipe.fileHandleForReading.closeFile()
     
-    return String(data: outputData, encoding: .utf8)
+    return String(data: outputData, encoding: .utf8) ?? ""
   }
 }
