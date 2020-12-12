@@ -96,7 +96,7 @@ func escrowKey() -> Bool{
   
 
   cliTask("/usr/bin/curl", arguments: args, waitForTermination: true)
-
+/*
       mydata = urllib.parse.urlencode(mydata)
       config_file = build_curl_config_file({"url": theurl, "data": mydata})
       # --fail: Fail silently (no output at all) on server errors.
@@ -126,13 +126,14 @@ func escrowKey() -> Bool{
       else:
           logging.error("Key escrow unsuccessful.")
           return False
-  
+  */
 }
 
 func server_initiated_rotation(output: String) -> String {
   // Rotate the key if the server tells us to.
   // We need the old key to be present on disk and RotateUsedKey to be True
   
+  /*
      try:
          json_output = json.loads(output)
      except ValueError:
@@ -150,7 +151,7 @@ func server_initiated_rotation(output: String) -> String {
      if json_output.get("rotation_required", False):
          logging.info("Removing output plist for rotation at next login.")
          os.remove(output_plist)
-  
+  */
 }
 
 /// Determines if the FV Recovery Key is currently in
@@ -274,6 +275,7 @@ func rotate_key(current_key: String, plist: String) {
 
 func get_enabled_user() -> String {
   var nonusers = pref(pref_name: .SkipUsers) as? [String] ?? [String]()
+  return ""
 }
 
 func rotate_if_used(key_path: String) {
@@ -298,3 +300,63 @@ func rotate_if_used(key_path: String) {
 }
 
 // here we go do the actual running
+
+if let plist_path = pref(pref_name: .OutputPath) as? String {
+  logging("OutputPath Pref is set to: \(plist_path)")
+  if pref(pref_name: .RotateUsedKey) as? Bool ?? false {
+    rotate_if_used(key_path: plist_path)
+  }
+}
+/*
+plist_path = pref("OutputPath")
+    logging.info(f"OutputPath Pref is set to: {plist_path}")
+    if pref("RotateUsedKey"):
+        rotate_if_used(plist_path)
+
+    if pref("RotateUsedKey") and pref("ValidateKey") and not pref("RemovePlist"):
+        rotate_invalid_key(plist_path)
+        post_run_command()
+
+    if os.path.isfile(plist_path):
+        try:
+            with open(plist_path, "rb") as fp:
+                plist = plistlib.load(fp)
+        except plistlib.InvalidFileException as err:
+            logging.error(f"Failed to read {plist_path} with error: {err}")
+            exit(-1)
+        # Exit if we've run this within the last hour
+        try:
+            enableduser = plist["EnabledUser"]
+        except KeyError as e:
+            enableduser = get_console_user()
+        skippedusers = ["root", "_mbsetupuser"]
+        if not enableduser or enableduser in skippedusers:
+            enableduser = get_enabled_user()
+        plist["EnabledUser"] = enableduser
+        if "last_run" in plist:
+            try:
+                escrow_interval = int(pref("KeyEscrowInterval"))
+            except Exception:
+                escrow_interval = 1
+            logging.info(f"KeyEscrowInterval set to: {escrow_interval} hour(s)...")
+            now = datetime.datetime.now()
+            hour_ago = now - datetime.timedelta(hours=escrow_interval)
+            if plist["last_run"] > hour_ago:
+                logging.info(
+                    f"We escrowed less than {escrow_interval} hour(s) ago. Skipping..."
+                )
+                sys.exit(0)
+        escrow_result = escrow_key(plist=plist)
+        if escrow_result and os.path.isfile(plist_path):
+            remove_plist = pref("RemovePlist")
+            plist["escrow_success"] = True
+            plist["last_run"] = datetime.datetime.now()
+            with open(plist_path, "wb") as fp:
+                plistlib.dump(plist, fp)
+            if remove_plist is True:
+                logging.info("Removing plist due to configuration.")
+                os.remove(plist_path)
+            else:
+                logging.info("Ensuring permissions on plist.")
+                os.chmod(plist_path, 600)
+*/
